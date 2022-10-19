@@ -11,7 +11,6 @@ function setCardType(type) {
 		mastercard: ["#DF6F29", "#C69347"],
 		elo: ["#550101", "#575814"],
 		americanExpress: ["#0E062E", "#17487A"],
-		creditSuisse: ["#B690FF", "#1A3781"],
 		default: ["#0e0e0e", "#545454"],
 	}
 
@@ -51,13 +50,23 @@ const cardNumberPattern = {
 	mask: [
 		{
 			mask: "0000 0000 0000 0000",
-			regex:  /^4\d{0,15}/,
+			regex: /^4\d{0,15}/,
 			cardType: "visa",
 		},
 		{
 			mask: "0000 0000 0000 0000",
-			regex: /(^5[1-5]\d{0,2} | ^22[2-9]\d | ^2[3-7]\d{0,2})\d{0,12}/,
+			regex: /^(5[1-5]\d{0,2}|^22[2-9]\d{0,1}|^2[3-7]\d{0,2})\d{0,12}/,
 			cardType: "mastercard",
+		},
+		{
+			mask: "0000 0000 0000 0000",
+			regex: /^3[47]\d{0,13}/,
+			cardType: "americanExpress",
+		},
+		{
+			mask: "0000 0000 0000 0000",
+			regex: /^((((636368)|(438935)|(504175)|(451416)|(636297))\d{0,10})|((5067)|(4576)|(4011))\d{0,12})/,
+			cardType: "elo",
 		},
 		{
 			mask: "0000 0000 0000 0000",
@@ -66,7 +75,7 @@ const cardNumberPattern = {
 	],
 	dispatch: function (appended, dynamicMasked) {
 		const number = (dynamicMasked.value + appended).replace(/\D/g, "")
-		const foundMask = dynamicMasked.compiledMasks.find(function(item) {
+		const foundMask = dynamicMasked.compiledMasks.find(function (item) {
 			return number.match(item.regex)
 		})
 
